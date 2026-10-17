@@ -123,10 +123,61 @@
 
 @keyframes block {
   0% {
-    left: 580px;
+    left: 600px;
   }
 
   100% {
-    left: -5px;
+    left: -20px;
   }
+}
+
+.game.over,
+.game.over *,
+.game.over::before,
+.game.over::after {
+  animation-play-state: paused !important;
+}
+
+.game-over {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  text-align: center;
+}
+
+.game-over h2 {
+  margin: 0 0 6px;
+  font-size: 32px;
+}
+
+.game-over p {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+
+.game-over button {
+  padding: 8px 20px;
+  font-size: 16px;
+  border: 2px solid white;
+  border-radius: 4px;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+}
+
+.game-over button:hover {
+  background: white;
+  color: #535454;
+}
+
+.game-over .new-record {
+  color: #ffd84d;
+  font-weight: bold;
+  margin-bottom: 6px;
 }
