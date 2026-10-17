@@ -4,41 +4,58 @@ import "./Dino.css";
 function Dino() {
   const dinoRef = useRef();
   const cactusRef = useRef();
+  const gameRef = useRef();
+  const scoreRef = useRef(0);
+  const collisionRef = useRef(false);
   const [score, setScore] = useState(0);
 
   const jump = () => {
-    if (!!dinoRef.current && dinoRef.current.classList != "jump") {
+    if (dinoRef.current && !dinoRef.current.classList.contains("jump")) {
       dinoRef.current.classList.add("jump");
       setTimeout(function () {
-        dinoRef.current.classList.remove("jump");
+        dinoRef.current?.classList.remove("jump");
       }, 300);
     }
   };
 
+  const speedUp = () => {
+    const game = gameRef.current;
+    if (!game) return;
+
+    const time = Math.max(0.45, 1 - scoreRef.current / 10000);
+    game.style.setProperty("--cactus-time", `${time}s`);
+    collisionRef.current = false;
+  };
+
   useEffect(() => {
-    const isAlive = setInterval(function () {
-      // get current dino Y position
-      const dinoTop = parseInt(
-        getComputedStyle(dinoRef.current).getPropertyValue("top")
+    const isAlive = setInterval(() => {
+      const dino = dinoRef.current;
+      const cactus = cactusRef.current;
+      if (!dino || !cactus || collisionRef.current) return;
+
+      const dinoTop = Number.parseInt(
+        getComputedStyle(dino).getPropertyValue("top"),
+        10
+      );
+      const cactusLeft = Number.parseInt(
+        getComputedStyle(cactus).getPropertyValue("left"),
+        10
       );
 
-      // get current cactus X position
-      let cactusLeft = parseInt(
-        getComputedStyle(cactusRef.current).getPropertyValue("left")
-      );
-
-      // detect collision
       if (cactusLeft < 40 && cactusLeft > 0 && dinoTop >= 140) {
-        // collision
-        alert("Game Over! Your Score : " + score);
+        collisionRef.current = true;
+        const finalScore = scoreRef.current;
+        scoreRef.current = 0;
         setScore(0);
+        alert("Game Over! Your Score : " + finalScore);
       } else {
-        setScore(score + 1);
+        scoreRef.current += 1;
+        setScore(scoreRef.current);
       }
     }, 10);
 
     return () => clearInterval(isAlive);
-  });
+  }, []);
 
   useEffect(() => {
     document.addEventListener("keydown", jump);
@@ -46,10 +63,10 @@ function Dino() {
   }, []);
 
   return (
-    <div className="game">
+    <div className="game" ref={gameRef}>
       <div className="score">Score : {score}</div>
       <div id="dino" ref={dinoRef}></div>
-      <div id="cactus" ref={cactusRef}></div>
+      <div id="cactus" ref={cactusRef} onAnimationIteration={speedUp}></div>
     </div>
   );
 }
