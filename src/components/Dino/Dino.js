@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./Dino.css";
 
 const HIGH_SCORE_KEY = "dinoHighScore";
@@ -8,6 +8,8 @@ function Dino() {
   const cactusRef = useRef();
   const gameRef = useRef();
   const gameOverRef = useRef(false);
+  const startedRef = useRef(false);
+  const [started, setStarted] = useState(false);
   const collisionRef = useRef(false);
   const scoreRef = useRef(0);
   const [score, setScore] = useState(0);
@@ -24,7 +26,21 @@ function Dino() {
   const highScoreRef = useRef(highScore);
   const [newRecord, setNewRecord] = useState(false);
 
-  const jump = () => {
+  const start = useCallback(() => {
+    if (startedRef.current || gameOverRef.current) return;
+    startedRef.current = true;
+    setStarted(true);
+  }, []);
+
+  const jump = useCallback((e) => {
+    if (e.code !== "Space" && e.code !== "ArrowUp") return;
+    e.preventDefault();
+
+    if (!startedRef.current) {
+      start();
+      return;
+    }
+
     if (gameOverRef.current) return;
     if (dinoRef.current && !dinoRef.current.classList.contains("jump")) {
       dinoRef.current.classList.add("jump");
@@ -32,7 +48,7 @@ function Dino() {
         dinoRef.current?.classList.remove("jump");
       }, 300);
     }
-  };
+  }, [start]);
 
   const speedUp = () => {
     const game = gameRef.current;
@@ -44,7 +60,7 @@ function Dino() {
   };
 
   useEffect(() => {
-    if (gameOver) return;
+    if (gameOver || !started) return;
 
     const isAlive = setInterval(() => {
       const dino = dinoRef.current;
@@ -60,7 +76,7 @@ function Dino() {
         10
       );
 
-      if (cactusLeft < 40 && cactusLeft > 0 && dinoTop >= 140) {
+      if (cactusLeft < 40 && cactusLeft > 0 && dinoTop >= 165) {
         collisionRef.current = true;
         gameOverRef.current = true;
         setGameOver(true);
@@ -83,19 +99,21 @@ function Dino() {
     }, 10);
 
     return () => clearInterval(isAlive);
-  }, [gameOver]);
+  }, [gameOver, started]);
 
   useEffect(() => {
     document.addEventListener("keydown", jump);
     return () => document.removeEventListener("keydown", jump);
-  }, []);
+  }, [jump]);
 
   const restart = () => {
     scoreRef.current = 0;
     collisionRef.current = false;
     gameOverRef.current = false;
+    startedRef.current = true;
     setScore(0);
     setGameOver(false);
+    setStarted(true);
     setNewRecord(false);
     gameRef.current?.style.setProperty("--cactus-time", "1s");
     setRound((currentRound) => currentRound + 1);
@@ -103,7 +121,7 @@ function Dino() {
 
   return (
     <div
-      className={gameOver ? "game over" : "game"}
+      className={gameOver ? "game over" : started ? "game" : "game waiting"}
       key={round}
       ref={gameRef}
     >
@@ -111,11 +129,20 @@ function Dino() {
       <div id="dino" ref={dinoRef}></div>
       <div id="cactus" ref={cactusRef} onAnimationIteration={speedUp}></div>
 
+      {!started && (
+        <div className="game-over start-screen">
+          <h2>Don't Hit Anything!</h2>
+          <p>Press Space or ↑ to start</p>
+          {highScore > 0 && <p>High score: {highScore}</p>}
+          <button onClick={start}>Start</button>
+        </div>
+      )}
+
       {gameOver && (
         <div className="game-over">
           <h2>Game Over</h2>
           {newRecord && <p className="new-record">New high score!</p>}
-          <p>Dude, don't run into cacti</p>
+          <p>Dude, you ran into a cactus</p>
           <p>Score: {score}</p>
           <p>High Score: {highScore}</p>
           <button onClick={restart}>Play again</button>

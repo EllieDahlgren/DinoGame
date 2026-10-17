@@ -1,6 +1,6 @@
 .game {
   width: 600px;
-  height: 225px;
+  height: 250px;
   border: 1px solid black;
   margin: auto;
   position: relative;
@@ -43,18 +43,18 @@
   background-image: repeating-linear-gradient(
     90deg,
     #535454 0 6px,
-    transparent 6px 40px
+    transparent 6px 31px
   );
-  background-size: 117px 2px;
+  background-size: 31px 2px;
   background-repeat: repeat-x;
   background-position: 0 4px;
   z-index: 1;
-  animation: ground calc(var(--cactus-time) / 5) linear infinite;
+  animation: ground var(--cactus-time) linear infinite;
 }
 
 @keyframes ground {
   from { background-position-x: 0; }
-  to { background-position-x: -117px; }
+  to { background-position-x: -31px; }
 }
 
 #dino {
@@ -65,7 +65,7 @@
   background-repeat: no-repeat;
   background-position: center bottom;
   position: relative;
-  top: 150px;
+  top: 175px;
   z-index: 2;
 
   animation: run 0.2s linear infinite;
@@ -87,23 +87,23 @@
 
 @keyframes jump {
   0% {
-    top: 150px;
+    top: 175px;
   }
 
   30% {
-    top: 130px;
+    top: 155px;
   }
 
   50% {
-    top: 80px;
+    top: 105px;
   }
 
   80% {
-    top: 130px;
+    top: 155px;
   }
 
   100% {
-    top: 150px;
+    top: 175px;
   }
 }
 
@@ -111,7 +111,7 @@
   width: 20px;
   height: 40px;
   position: relative;
-  top: 110px;
+  top: 135px;
   left: 580px;
   z-index: 2;
 
@@ -180,4 +180,20 @@
   color: #ffd84d;
   font-weight: bold;
   margin-bottom: 6px;
+}
+
+.game.waiting,
+.game.waiting *,
+.game.waiting::before,
+.game.waiting::after {
+  animation-play-state: paused !important;
+}
+
+.game.waiting #dino {
+  animation: none;
+}
+
+/* start screen: reuses the .game-over layout, just a lighter tint */
+.start-screen {
+  background: rgba(0, 0, 0, 0.35);
 }
