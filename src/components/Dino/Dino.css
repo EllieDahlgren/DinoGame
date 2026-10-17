@@ -8,14 +8,28 @@
 #dino {
   width: 50px;
   height: 50px;
-  background-image: url(img/trex.png);
-  background-size: 50px 50px;
+  background-image: url(img/dino-stand.png);
+  background-size: 29px 31px;
+  background-repeat: no-repeat;
+  background-position: center;
   position: relative;
   top: 150px;
+
+  animation: run 0.2s linear infinite;
 }
 
-.jump {
+@keyframes run {
+  0%, 49.99% {
+    background-image: url(img/dino-run-1.png);
+  }
+  50%, 100% {
+    background-image: url(img/dino-run-2.png);
+  }
+}
+
+#dino.jump {
   animation: jump 0.3s linear;
+  background-image:url(img/dino-stand.png);
 }
 
 @keyframes jump {
