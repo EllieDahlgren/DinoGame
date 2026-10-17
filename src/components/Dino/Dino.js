@@ -47,7 +47,7 @@ function Dino() {
 
   return (
     <div className="game">
-      Score : {score}
+      <div className="score">Score : {score}</div>
       <div id="dino" ref={dinoRef}></div>
       <div id="cactus" ref={cactusRef}></div>
     </div>

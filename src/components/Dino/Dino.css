@@ -3,6 +3,57 @@
   height: 225px;
   border: 1px solid black;
   margin: auto;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: #cfe8ff url(img/desert-background-day.png) center / cover;
+}
+
+.score {
+  position: relative;
+  z-index: 2;
+}
+
+.game::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url(img/desert-background-night.png) center / cover;
+  opacity: 0;
+  animation: bgfade 30s ease-in-out infinite;
+}
+
+@keyframes bgfade {
+  0%, 40% { opacity: 0; }
+  50%, 90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.game::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 9px;
+  border-top: 2px solid #535454;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #535454 0 6px,
+    transparent 6px 40px
+  );
+  background-size: 117px 2px;
+  background-repeat: repeat-x;
+  background-position: 0 4px;
+  z-index: 1;
+  animation: ground 0.2s linear infinite;
+}
+
+@keyframes ground {
+  from { background-position-x: 0; }
+  to { background-position-x: -117px; }
 }
 
 #dino {
@@ -11,9 +62,10 @@
   background-image: url(img/dino-stand.png);
   background-size: 29px 31px;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center bottom;
   position: relative;
   top: 150px;
+  z-index: 2;
 
   animation: run 0.2s linear infinite;
 }
@@ -60,6 +112,7 @@
   position: relative;
   top: 110px;
   left: 580px;
+  z-index: 2;
 
   background-image: url("img/cactus.png");
   background-size: 20px 40px;
